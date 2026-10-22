@@ -2,9 +2,9 @@
 "use strict";
 
 /*
- * Learnora — frontend prototype
- * This file uses sample data only.
- * No real accounts, enrollment service or backend is connected.
+ * Learnora frontend prototype.
+ * Uses original sample course data only.
+ * No backend, real accounts or enrolment service is connected.
  */
 
 const courses = [
@@ -15,8 +15,7 @@ const courses = [
     level: "Beginner",
     duration: 90,
     durationLabel: "90 minutes",
-    description:
-      "Understand how businesses create value, serve customers and turn ideas into useful products and services.",
+    description: "Understand how businesses create value, serve customers and turn ideas into useful products and services.",
     artTitle: "Think like a builder.",
     symbol: "↗",
     background: "#F2C94C",
@@ -34,8 +33,7 @@ const courses = [
     level: "Beginner",
     duration: 120,
     durationLabel: "2 hours",
-    description:
-      "Learn to read basic data, interpret charts and ask better questions before making decisions.",
+    description: "Learn to read basic data, interpret charts and ask better questions before making decisions.",
     artTitle: "Make sense of data.",
     symbol: "01",
     background: "#D9E4DE",
@@ -53,8 +51,7 @@ const courses = [
     level: "Beginner",
     duration: 150,
     durationLabel: "2.5 hours",
-    description:
-      "Explore positioning, customer perception and the choices that help a brand stand out.",
+    description: "Explore positioning, customer perception and the choices that help a brand stand out.",
     artTitle: "Make meaning matter.",
     symbol: "B.",
     background: "#E6DCD3",
@@ -72,8 +69,7 @@ const courses = [
     level: "Beginner",
     duration: 100,
     durationLabel: "100 minutes",
-    description:
-      "Practice understanding user problems, generating ideas and testing early solutions.",
+    description: "Practice understanding user problems, generating ideas and testing early solutions.",
     artTitle: "Start with people.",
     symbol: "✳",
     background: "#DCD9EC",
@@ -91,8 +87,7 @@ const courses = [
     level: "Beginner",
     duration: 80,
     durationLabel: "80 minutes",
-    description:
-      "Discover how browsers, websites, HTML, CSS and JavaScript work together to create web experiences.",
+    description: "Discover how browsers, websites, HTML, CSS and JavaScript work together to create web experiences.",
     artTitle: "Understand the web.",
     symbol: "</>",
     background: "#D9E5EE",
@@ -110,8 +105,7 @@ const courses = [
     level: "Beginner",
     duration: 60,
     durationLabel: "60 minutes",
-    description:
-      "Build a practical approach to questions, assumptions and everyday decisions.",
+    description: "Build a practical approach to questions, assumptions and everyday decisions.",
     artTitle: "Question the obvious.",
     symbol: "?",
     background: "#E7E2D3",
@@ -150,7 +144,6 @@ function escapeHTML(value) {
       '"': "&quot;",
       "'": "&#39;"
     };
-
     return entities[character];
   });
 }
@@ -178,9 +171,7 @@ function getFilteredCourses() {
 
   if (sortValue === "title") {
     result.sort((a, b) => a.title.localeCompare(b.title));
-  }
-
-  if (sortValue === "duration") {
+  } else if (sortValue === "duration") {
     result.sort((a, b) => a.duration - b.duration);
   }
 
@@ -258,9 +249,7 @@ function openCourse(courseId) {
       ${escapeHTML(course.title)}
     </h2>
 
-    <p class="dialog-description">
-      ${escapeHTML(course.description)}
-    </p>
+    <p class="dialog-description">${escapeHTML(course.description)}</p>
 
     <div class="course-meta">
       <span>${escapeHTML(course.level)}</span>
@@ -277,7 +266,7 @@ function openCourse(courseId) {
     </ul>
 
     <div class="dialog-notice">
-      This is a frontend demonstration. Real enrollment and course
+      This is a frontend demonstration. Real enrolment and course
       completion services have not been connected yet.
     </div>
 
@@ -300,10 +289,7 @@ function openCourse(courseId) {
 }
 
 function closeCourseDialog() {
-  if (courseDialog?.open) {
-    courseDialog.close();
-  }
-
+  if (courseDialog?.open) courseDialog.close();
   document.body.classList.remove("dialog-open");
 }
 
@@ -314,10 +300,9 @@ function showToast(message) {
   toast.classList.add("show");
 
   window.clearTimeout(toastTimeout);
-
   toastTimeout = window.setTimeout(() => {
     toast.classList.remove("show");
-  }, 2800);
+  }, 3000);
 }
 
 function getSavedCourses() {
@@ -325,7 +310,6 @@ function getSavedCourses() {
     const saved = JSON.parse(
       localStorage.getItem("learnora-saved-courses") || "[]"
     );
-
     return Array.isArray(saved) ? saved : [];
   } catch {
     return [];
@@ -334,7 +318,6 @@ function getSavedCourses() {
 
 function saveCourse(courseId) {
   const course = courses.find(item => item.id === courseId);
-
   if (!course) return;
 
   try {
@@ -346,11 +329,7 @@ function saveCourse(courseId) {
     }
 
     saved.push(courseId);
-    localStorage.setItem(
-      "learnora-saved-courses",
-      JSON.stringify(saved)
-    );
-
+    localStorage.setItem("learnora-saved-courses", JSON.stringify(saved));
     showToast("Course saved in this browser.");
   } catch {
     showToast("Browser storage is unavailable. Nothing was saved.");
@@ -359,24 +338,17 @@ function saveCourse(courseId) {
 
 function previewCourse(courseId) {
   const course = courses.find(item => item.id === courseId);
-
   if (!course) return;
 
   closeCourseDialog();
-
-  showToast(
-    `Preview selected: ${course.title}. The lesson experience is our next build step.`
-  );
+  showToast(`Preview selected: ${course.title}. Full lessons are a future build step.`);
 }
 
 function setActiveCategory(category) {
   activeCategory = category;
 
-  if (!categoryList) return;
-
-  categoryList.querySelectorAll("[data-category]").forEach(button => {
+  categoryList?.querySelectorAll("[data-category]").forEach(button => {
     const isActive = button.dataset.category === category;
-
     button.classList.toggle("active", isActive);
     button.setAttribute("aria-pressed", String(isActive));
   });
@@ -384,36 +356,62 @@ function setActiveCategory(category) {
   renderCourses();
 }
 
+function searchFor(query) {
+  if (courseSearch) courseSearch.value = query;
+  setActiveCategory("All");
+
+  document.querySelector("#explore")?.scrollIntoView({
+    behavior: "smooth",
+    block: "start"
+  });
+
+  if (query && getFilteredCourses().length === 0) {
+    showToast("No matching sample courses. Try another keyword.");
+  }
+}
+
+/* Catalogue controls */
+
 courseSearch?.addEventListener("input", renderCourses);
 courseSort?.addEventListener("change", renderCourses);
 
 categoryList?.addEventListener("click", event => {
   const button = event.target.closest("[data-category]");
-
-  if (!button) return;
-
-  setActiveCategory(button.dataset.category);
+  if (button) setActiveCategory(button.dataset.category);
 });
 
 courseGrid?.addEventListener("click", event => {
   const button = event.target.closest("[data-open-course]");
-
-  if (button) {
-    openCourse(button.dataset.openCourse);
-  }
+  if (button) openCourse(button.dataset.openCourse);
 });
+
+heroSearch?.addEventListener("submit", event => {
+  event.preventDefault();
+  searchFor(heroSearchInput?.value.trim() || "");
+});
+
+document.querySelectorAll("[data-quick-search]").forEach(button => {
+  button.addEventListener("click", () => {
+    searchFor(button.dataset.quickSearch || "");
+  });
+});
+
+document.querySelectorAll("[data-path-search]").forEach(link => {
+  link.addEventListener("click", () => {
+    const query = link.dataset.pathSearch || "";
+    if (courseSearch) courseSearch.value = query;
+    activeCategory = "All";
+  });
+});
+
+/* Course dialog */
 
 dialogContent?.addEventListener("click", event => {
   const saveButton = event.target.closest("[data-save-course]");
   const previewButton = event.target.closest("[data-demo-start]");
 
-  if (saveButton) {
-    saveCourse(saveButton.dataset.saveCourse);
-  }
-
-  if (previewButton) {
-    previewCourse(previewButton.dataset.demoStart);
-  }
+  if (saveButton) saveCourse(saveButton.dataset.saveCourse);
+  if (previewButton) previewCourse(previewButton.dataset.demoStart);
 });
 
 dialogClose?.addEventListener("click", closeCourseDialog);
@@ -423,31 +421,10 @@ courseDialog?.addEventListener("close", () => {
 });
 
 courseDialog?.addEventListener("click", event => {
-  if (event.target === courseDialog) {
-    closeCourseDialog();
-  }
+  if (event.target === courseDialog) closeCourseDialog();
 });
 
-heroSearch?.addEventListener("submit", event => {
-  event.preventDefault();
-
-  const query = heroSearchInput?.value.trim() || "";
-
-  if (courseSearch) {
-    courseSearch.value = query;
-  }
-
-  setActiveCategory("All");
-
-  document.querySelector("#courses")?.scrollIntoView({
-    behavior: "smooth",
-    block: "start"
-  });
-
-  if (query && getFilteredCourses().length === 0) {
-    showToast("No matching sample courses. Try another keyword.");
-  }
-});
+/* Mobile navigation */
 
 menuToggle?.addEventListener("click", () => {
   const isOpen = mainNav?.classList.toggle("open") || false;
@@ -467,17 +444,36 @@ mainNav?.querySelectorAll("a").forEach(link => {
   });
 });
 
-document.querySelectorAll('a[href="#demo"]').forEach(link => {
-  link.addEventListener("click", event => {
-    event.preventDefault();
-    showToast("Demo access will be built in a later step.");
+/* Prototype-only interactions */
+
+document.querySelectorAll("[data-path-search]").forEach(link => {
+  link.addEventListener("click", () => {
+    searchFor(link.dataset.pathSearch || "");
   });
 });
 
 const currentYear = document.querySelector("#currentYear");
+if (currentYear) currentYear.textContent = String(new Date().getFullYear());
 
-if (currentYear) {
-  currentYear.textContent = String(new Date().getFullYear());
-}
+/* Institutional inquiry form: browser-only demonstration */
+
+const inquiryForm = document.querySelector("#inquiryForm");
+
+inquiryForm?.addEventListener("submit", event => {
+  event.preventDefault();
+
+  if (!inquiryForm.reportValidity()) return;
+
+  const success = document.querySelector("#formSuccess");
+  if (success) {
+    success.hidden = false;
+    success.textContent =
+      "Thanks for your interest. This demo form does not send your details anywhere yet.";
+  }
+
+  inquiryForm.reset();
+});
+
+/* Initial render */
 
 renderCourses();

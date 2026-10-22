@@ -1,0 +1,136 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Learn about Learnora's approach to accessible, practical learning.">
+  <title>About Learnora</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <div class="audience-bar">
+    <div class="container audience-inner">
+      <span>Learning for your next step</span>
+      <nav aria-label="Choose your experience">
+        <a class="audience-link" href="index.html">For individuals</a>
+        <a class="audience-link" href="universities.html">For universities</a>
+      </nav>
+    </div>
+  </div>
+
+  <header class="site-header">
+    <div class="container nav-wrap">
+      <a class="brand" href="index.html" aria-label="Learnora home">
+        <span class="brand-mark">L</span>
+        <span>learnora<span class="brand-period">.</span></span>
+      </a>
+      <button class="menu-toggle" id="menuToggle" type="button"
+        aria-label="Open navigation" aria-expanded="false" aria-controls="mainNav">
+        <span></span><span></span><span></span>
+      </button>
+      <nav class="main-nav" id="mainNav" aria-label="Main navigation">
+        <a href="index.html#explore">Explore courses</a>
+        <a href="index.html#how-it-works">How it works</a>
+        <a href="universities.html">For institutions</a>
+      </nav>
+      <div class="nav-actions">
+        <a class="button button-dark button-small" href="index.html#explore">Explore learning <span>↗</span></a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="about-hero">
+      <div class="container">
+        <p class="eyebrow">ABOUT LEARNORA / 001</p>
+        <h1>Learning should help you move <span>forward.</span></h1>
+        <p class="hero-description">
+          Learnora is an early-stage concept for making structured learning
+          feel accessible, practical and easier to act on.
+        </p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container about-copy">
+        <p class="eyebrow">OUR APPROACH</p>
+        <h2>Start with curiosity. Build with intention.</h2>
+        <p>
+          We imagine a learning experience where people can explore topics,
+          develop useful skills and make steady progress without needing to
+          have every next step figured out in advance.
+        </p>
+        <p>
+          The current website is a prototype. It uses original sample course
+          content to demonstrate the proposed interface and interactions.
+          It does not yet provide real accounts, enrolment, certificates,
+          institutional integrations or a connected learning backend.
+        </p>
+
+        <div class="about-values">
+          <article class="about-value">
+            <strong>Clarity</strong>
+            <p>Make it easier to understand what a learner can explore and why it matters.</p>
+          </article>
+          <article class="about-value">
+            <strong>Practicality</strong>
+            <p>Connect ideas to skills, questions and actions people can use.</p>
+          </article>
+          <article class="about-value">
+            <strong>Progress</strong>
+            <p>Make learning feel like a series of manageable next steps.</p>
+          </article>
+        </div>
+
+        <div style="margin-top: 35px;">
+          <a class="button button-dark" href="index.html#explore">Explore sample courses <span>↗</span></a>
+          <a class="button button-outline" href="universities.html" style="margin-left: 8px;">For universities</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="prototype-note">
+      <div class="container prototype-inner">
+        <span class="note-mark">i</span>
+        <div>
+          <strong>Built in the open, one step at a time.</strong>
+          <p>Learnora is a work in progress. The current site is a demonstration of the intended experience, not a fully launched learning service.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-main">
+      <div class="footer-brand-block">
+        <a class="brand footer-brand" href="index.html">
+          <span class="brand-mark">L</span><span>learnora<span class="brand-period">.</span></span>
+        </a>
+        <p>Stay curious. Keep moving forward.</p>
+      </div>
+      <div class="footer-column">
+        <strong>Explore</strong>
+        <a href="index.html#explore">Courses</a>
+        <a href="index.html#career-paths">Learning paths</a>
+      </div>
+      <div class="footer-column">
+        <strong>Learnora</strong>
+        <a href="universities.html">For institutions</a>
+        <a href="index.html#prototype-note">Prototype status</a>
+      </div>
+    </div>
+    <div class="container footer-bottom">
+      <span>© <span id="currentYear">2026</span> Learnora · Prototype</span>
+      <span class="mono-label">BUILT FOR THE NEXT STEP</span>
+    </div>
+  </footer>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>
