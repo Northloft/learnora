@@ -9,7 +9,6 @@ window.NavyugAuth = (() => {
       ${join ? `<label>Full name<input name="name" autocomplete="name" required></label>` : ""}
       <label>Email<input name="email" type="email" autocomplete="email" required></label>
       <p class="auth-err" role="alert" hidden></p>
-      <p class="p-note"><b>Demo account.</b> Your details stay in this browser. No password is collected or checked yet.</p>
       <div class="dialog-actions"><button class="button button-dark" type="submit">${join ? "Join for Free" : "Log in"}</button><button class="button button-outline" type="button" data-close>Cancel</button></div>
       <p class="auth-switch">${join ? 'Already have an account? <button type="button" class="text-link" data-switch="login">Log in</button>' : 'New to Navyug Learn? <button type="button" class="text-link" data-switch="join">Join for Free</button>'}</p></form>`;
     document.body.append(d); d.showModal();

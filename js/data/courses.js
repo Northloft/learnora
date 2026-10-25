@@ -79,11 +79,12 @@ const courses = [
   },
   {
     id: "data-literacy",
+    keywords: "data analytics data analysis statistics charts",
     featured: true,
     type: "Course",
     price: 1999,
     title: "Data Literacy: The Essentials",
-    category: "Technology",
+    category: "Data Science",
     level: "Beginner",
     duration: 120,
     durationLabel: "2 hours",
@@ -124,7 +125,7 @@ const courses = [
     type: "Course",
     price: 1999,
     title: "Design Thinking in Practice",
-    category: "Design",
+    category: "Arts and Humanities",
     level: "Beginner",
     duration: 100,
     durationLabel: "100 minutes",
@@ -141,10 +142,11 @@ const courses = [
   },
   {
     id: "web-fundamentals",
+    keywords: "web html css javascript programming",
     type: "Essentials",
     price: 499,
     title: "How the Web Works",
-    category: "Technology",
+    category: "Computer Science",
     level: "Beginner",
     duration: 80,
     durationLabel: "80 minutes",
@@ -164,7 +166,7 @@ const courses = [
     type: "Tutorial",
     price: 0,
     title: "Thinking Clearly",
-    category: "Personal Growth",
+    category: "Personal Development",
     level: "Beginner",
     duration: 60,
     durationLabel: "60 minutes",
@@ -181,12 +183,13 @@ const courses = [
   },
   {
     id: "spreadsheets-everyday",
+    keywords: "data analytics excel spreadsheet",
     isNew: true,
     featured: true,
     type: "Tutorial",
     price: 0,
     title: "Spreadsheets for Everyday Work",
-    category: "Technology",
+    category: "Data Science",
     level: "Beginner",
     duration: 60,
     durationLabel: "1 hour",
@@ -204,7 +207,7 @@ const courses = [
     type: "Essentials",
     price: 499,
     title: "Writing Clearly at Work",
-    category: "Personal Growth",
+    category: "Personal Development",
     level: "Beginner",
     duration: 75,
     durationLabel: "75 minutes",
@@ -234,6 +237,7 @@ const courses = [
   },
   {
     id: "project-planning",
+    keywords: "project management planning",
     isNew: true,
     type: "Course",
     price: 1999,
@@ -256,7 +260,7 @@ const courses = [
     type: "Course",
     price: 1999,
     title: "Introduction to User Research",
-    category: "Design",
+    category: "Social Sciences",
     level: "Beginner",
     duration: 120,
     durationLabel: "2 hours",
@@ -269,11 +273,12 @@ const courses = [
   },
   {
     id: "digital-safety",
+    keywords: "cybersecurity security IT",
     isNew: true,
     type: "Tutorial",
     price: 0,
     title: "Digital Safety Essentials",
-    category: "Technology",
+    category: "Information Technology",
     level: "Beginner",
     duration: 70,
     durationLabel: "70 minutes",
@@ -286,13 +291,26 @@ const courses = [
   }
 ];
 
-/* Categories. speciality: true groups a category under "EV and battery technology". image = course art used as the tile picture. */
+/* Categories. speciality: true groups a category under "EV and battery technology".
+   The twelve general categories are the homepage / Explore filters. Some have no courses yet; the UI says so honestly. */
 const categories = [
-  { name: "Electric Vehicles", speciality: true, image: "ev-fundamentals" },
-  { name: "Battery Technology", speciality: true, image: "battery-fundamentals" },
-  { name: "Charging Infrastructure", speciality: true, image: "ev-charging-basics" },
-  { name: "Business", image: "business-foundations" },
-  { name: "Technology", image: "data-literacy" },
-  { name: "Design", image: "design-thinking" },
-  { name: "Personal Growth", image: "better-thinking" }
+  { name: "Electric Vehicles", speciality: true },
+  { name: "Battery Technology", speciality: true },
+  { name: "Charging Infrastructure", speciality: true },
+  { name: "Business" }, { name: "Artificial Intelligence" }, { name: "Data Science" }, { name: "Computer Science" },
+  { name: "Information Technology" }, { name: "Personal Development" }, { name: "Healthcare" }, { name: "Language Learning" },
+  { name: "Social Sciences" }, { name: "Arts and Humanities" }, { name: "Physical Science and Engineering" }, { name: "Math and Logic" }
 ];
+
+/* Homepage collections. Labels make no popularity or release-date claims, because the data has none.
+   The same filters power ?collection=<key> on explore.html. */
+const collections = [
+  { key: "featured", title: "Featured courses", pick: c => c.featured },
+  { key: "new", title: "Recently added", pick: c => c.isNew },
+  { key: "ev", title: "Explore EV and battery", pick: c => c.speciality }
+];
+
+/* Course images. NAVYUG_IMAGES.courses[id] is a photo URL (js/data/images.js); if it is missing or fails to load,
+   the local illustration assets/<id>.svg is used. Navyug's own course photos replace the URLs later, in one file. */
+function courseImg(c) { return (window.NAVYUG_IMAGES && NAVYUG_IMAGES.courses && NAVYUG_IMAGES.courses[c.id]) || "assets/" + c.id + ".svg"; }
+function courseImgAttrs(c) { return `src="${courseImg(c)}" onerror="this.onerror=null;this.src='assets/${c.id}.svg'"`; }

@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><script>addEventListener("error",function(e){var t=e.target;if(!t||!/^(LINK|SCRIPT|IMG)$/.test(t.tagName||""))return;var u=t.getAttribute("href")||t.getAttribute("src")||"";if(!u||/^(https?:)?\/\//.test(u)||/^data:/.test(u))return;(window.__m=window.__m||[]).push(u);clearTimeout(window.__t);window.__t=setTimeout(function(){if(document.getElementById("missingBanner"))return;var b=document.createElement("div");b.id="missingBanner";b.setAttribute("role","alert");b.style.cssText="position:fixed;left:0;right:0;bottom:0;z-index:99999;background:#B00020;color:#fff;padding:14px 20px;font:15px/1.5 system-ui,sans-serif";b.innerHTML="<b>Some project files are missing.</b> Keep the folders exactly as shipped (css/, js/, assets/). Missing: "+Array.from(new Set(window.__m)).slice(0,5).join(", ")+". Open <a style='color:#fff' href='check.html'>check.html</a> for the full list.";(document.body||document.documentElement).appendChild(b)},400)},true)</script><link rel="icon" href="assets/favicon.svg" type="image/svg+xml"><meta name="theme-color" content="#1A1A1A"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Search and filter the Navyug Learn course catalogue."><title>Explore courses — Navyug Learn</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/base.css"><link rel="stylesheet" href="css/components.css"><link rel="stylesheet" href="css/site.css">
+<script src="js/data/courses.js"></script><script src="js/data/images.js"></script><script src="js/data/lessons.js" defer></script><script src="js/catalogue.js" defer></script><script src="js/pages.js" defer></script><script src="js/photos.js" defer></script></head>
+<body><script src="js/store.js"></script><script src="js/auth.js"></script><script src="js/chrome.js"></script>
+<main id="main"><section id="explore" class="x-sec"><div class="x-wrap"><h1 class="ex-h">Explore courses</h1><p class="x-sub">Search the catalogue, filter by subject, or sort by newest and length.</p>
+<div class="catalog-toolbar"><label class="catalog-search"><span aria-hidden="true">⌕</span><span class="visually-hidden">Search the catalogue</span><input type="search" id="courseSearch" placeholder="Search courses, skills or topics"></label>
+<label class="sort-control"><span class="visually-hidden">Sort courses</span><select id="courseSort"><option value="featured">Recommended</option><option value="title">Title: A–Z</option><option value="duration">Shortest first</option><option value="new">Newest first</option></select></label></div>
+<div class="category-list" id="categoryList" aria-label="Filter by category"></div>
+<p class="p-note" id="collectionNote" hidden></p>
+<div class="course-grid" id="courseGrid" aria-live="polite"></div><p class="empty-state" id="emptyState" hidden>No courses match that search.</p></div></section></main>
+<dialog class="course-dialog" id="courseDialog"><div id="dialogContent"></div></dialog>
+</body></html>
