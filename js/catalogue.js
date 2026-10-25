@@ -1,122 +1,12 @@
-
 "use strict";
 
 /*
- * Learnora frontend prototype.
- * Uses original sample course data only.
+ * Navyug Learn catalogue logic.
+ * Original Navyug course data.
  * No backend, real accounts or enrolment service is connected.
  */
 
-const courses = [
-  {
-    id: "business-foundations",
-    title: "Business Foundations",
-    category: "Business",
-    level: "Beginner",
-    duration: 90,
-    durationLabel: "90 minutes",
-    description: "Understand how businesses create value, serve customers and turn ideas into useful products and services.",
-    artTitle: "Think like a builder.",
-    symbol: "↗",
-    background: "#F2C94C",
-    foreground: "#1A1A1A",
-    outcomes: [
-      "Explain how a business creates value.",
-      "Identify customers and their basic needs.",
-      "Describe the role of revenue, costs and value."
-    ]
-  },
-  {
-    id: "data-literacy",
-    title: "Data Literacy: The Essentials",
-    category: "Technology",
-    level: "Beginner",
-    duration: 120,
-    durationLabel: "2 hours",
-    description: "Learn to read basic data, interpret charts and ask better questions before making decisions.",
-    artTitle: "Make sense of data.",
-    symbol: "01",
-    background: "#D9E4DE",
-    foreground: "#1A1A1A",
-    outcomes: [
-      "Distinguish common data types.",
-      "Read and interpret simple charts.",
-      "Recognize misleading data presentations."
-    ]
-  },
-  {
-    id: "brand-strategy",
-    title: "Introduction to Brand Strategy",
-    category: "Business",
-    level: "Beginner",
-    duration: 150,
-    durationLabel: "2.5 hours",
-    description: "Explore positioning, customer perception and the choices that help a brand stand out.",
-    artTitle: "Make meaning matter.",
-    symbol: "B.",
-    background: "#E6DCD3",
-    foreground: "#1A1A1A",
-    outcomes: [
-      "Distinguish a brand from its visual identity.",
-      "Describe a target audience and its needs.",
-      "Draft a basic positioning statement."
-    ]
-  },
-  {
-    id: "design-thinking",
-    title: "Design Thinking in Practice",
-    category: "Design",
-    level: "Beginner",
-    duration: 100,
-    durationLabel: "100 minutes",
-    description: "Practice understanding user problems, generating ideas and testing early solutions.",
-    artTitle: "Start with people.",
-    symbol: "✳",
-    background: "#DCD9EC",
-    foreground: "#1A1A1A",
-    outcomes: [
-      "Describe the stages of design thinking.",
-      "Write a clear problem statement.",
-      "Plan a simple test for an idea."
-    ]
-  },
-  {
-    id: "web-fundamentals",
-    title: "How the Web Works",
-    category: "Technology",
-    level: "Beginner",
-    duration: 80,
-    durationLabel: "80 minutes",
-    description: "Discover how browsers, websites, HTML, CSS and JavaScript work together to create web experiences.",
-    artTitle: "Understand the web.",
-    symbol: "</>",
-    background: "#D9E5EE",
-    foreground: "#1A1A1A",
-    outcomes: [
-      "Explain the role of a browser and a server.",
-      "Describe the purpose of HTML, CSS and JavaScript.",
-      "Identify the basic parts of a website."
-    ]
-  },
-  {
-    id: "better-thinking",
-    title: "Thinking Clearly",
-    category: "Personal Growth",
-    level: "Beginner",
-    duration: 60,
-    durationLabel: "60 minutes",
-    description: "Build a practical approach to questions, assumptions and everyday decisions.",
-    artTitle: "Question the obvious.",
-    symbol: "?",
-    background: "#E7E2D3",
-    foreground: "#1A1A1A",
-    outcomes: [
-      "Separate observations from assumptions.",
-      "Ask more precise questions.",
-      "Compare options using simple criteria."
-    ]
-  }
-];
+
 
 const courseGrid = document.querySelector("#courseGrid");
 const courseSearch = document.querySelector("#courseSearch");
@@ -133,6 +23,18 @@ const mainNav = document.querySelector("#mainNav");
 const toast = document.querySelector("#toast");
 
 let activeCategory = "All";
+
+/* Category tiles (homepage) */
+const categoryTiles = document.querySelector("#categoryTiles");
+if (categoryTiles) {
+  categoryTiles.innerHTML = categories.map(cat => `<a href="index.html?cat=${encodeURIComponent(cat.name)}#explore"><img src="assets/${escapeHTML(cat.image)}.svg" alt="" width="400" height="240" loading="lazy"><strong>${escapeHTML(cat.name)}</strong><small></small></a>`).join("");
+}
+
+/* Category chips come from the categories list in js/data/courses.js */
+if (categoryList) {
+  categoryList.innerHTML = '<button class="category-chip active" type="button" data-category="All" aria-pressed="true">All courses</button>' +
+    categories.map(cat => `<button class="category-chip${cat.speciality ? " is-speciality" : ""}" type="button" data-category="${escapeHTML(cat.name)}" aria-pressed="false">${escapeHTML(cat.name)}</button>`).join("");
+}
 let toastTimeout;
 
 function escapeHTML(value) {
@@ -161,10 +63,16 @@ function getFilteredCourses() {
       course.category,
       course.level,
       course.description,
+      course.keywords || "",
       ...course.outcomes
     ].join(" ").toLowerCase();
 
-    return matchesCategory && searchableText.includes(query);
+    /* Short queries such as "ev" or "bms" must match whole words, or "ev" would match "every" and "level". */
+    const matchesQuery = query.length > 3
+      ? searchableText.includes(query)
+      : new RegExp("(^|[^a-z0-9])" + query.replace(/[^a-z0-9]/g, "") + "([^a-z0-9]|$)").test(searchableText);
+
+    return matchesCategory && (!query || matchesQuery);
   });
 
   const sortValue = courseSort?.value || "featured";
@@ -173,6 +81,8 @@ function getFilteredCourses() {
     result.sort((a, b) => a.title.localeCompare(b.title));
   } else if (sortValue === "duration") {
     result.sort((a, b) => a.duration - b.duration);
+  } else if (sortValue === "new") {
+    result.sort((a, b) => (b.isNew ? 1 : 0) - (a.isNew ? 1 : 0));
   }
 
   return result;
@@ -181,16 +91,10 @@ function getFilteredCourses() {
 function createCourseCard(course, index) {
   return `
     <article class="course-card">
-      <div class="course-art"
-        style="--art-background:${course.background};
-               --art-foreground:${course.foreground}">
-        <span class="art-index">COURSE / ${String(index + 1).padStart(2, "0")}</span>
-        <span class="art-symbol" aria-hidden="true">${escapeHTML(course.symbol)}</span>
-        <span class="art-label">${escapeHTML(course.artTitle)}</span>
-      </div>
+      <img class="course-img" src="assets/${escapeHTML(course.id)}.svg" alt="" loading="lazy">
 
       <div class="course-card-body">
-        <p class="course-category">${escapeHTML(course.category)}</p>
+        <p class="course-category">${escapeHTML(course.category)}${course.sample ? '<span class="sample-flag" title="Demonstration content, not an approved Navyug offering">Sample</span>' : ""}</p>
         <h3>${escapeHTML(course.title)}</h3>
         <p class="course-description">${escapeHTML(course.description)}</p>
 
@@ -198,14 +102,14 @@ function createCourseCard(course, index) {
           <span>${escapeHTML(course.level)}</span>
           <span>${escapeHTML(course.durationLabel)}</span>
         </div>
+        <p class="course-price">${NavyugStore.priceLabel(course)}<small>${escapeHTML(course.type)}</small></p>
 
         <div class="course-card-actions">
-          <button class="course-open" type="button"
-            data-open-course="${escapeHTML(course.id)}"
+          <a class="course-open" href="course.html?id=${escapeHTML(course.id)}"
             aria-label="View ${escapeHTML(course.title)}">
             View course <span aria-hidden="true">↗</span>
-          </button>
-          <span class="course-tag">SAMPLE</span>
+          </a>
+          <span class="course-tag">${getSavedCourses().includes(course.id) ? "Saved" : course.isNew ? "New" : ""}</span>
         </div>
       </div>
     </article>
@@ -254,7 +158,6 @@ function openCourse(courseId) {
     <div class="course-meta">
       <span>${escapeHTML(course.level)}</span>
       <span>${escapeHTML(course.durationLabel)}</span>
-      <span>Original sample content</span>
     </div>
 
     <h3 class="dialog-section-title">What you will learn</h3>
@@ -265,15 +168,10 @@ function openCourse(courseId) {
       ).join("")}
     </ul>
 
-    <div class="dialog-notice">
-      This is a frontend demonstration. Real enrolment and course
-      completion services have not been connected yet.
-    </div>
-
     <div class="dialog-actions">
       <button class="button button-dark" type="button"
         data-demo-start="${escapeHTML(course.id)}">
-        Preview learning <span aria-hidden="true">↗</span>
+        Open course <span aria-hidden="true">↗</span>
       </button>
       <button class="button button-outline" type="button"
         data-save-course="${escapeHTML(course.id)}">
@@ -306,42 +204,20 @@ function showToast(message) {
 }
 
 function getSavedCourses() {
-  try {
-    const saved = JSON.parse(
-      localStorage.getItem("learnora-saved-courses") || "[]"
-    );
-    return Array.isArray(saved) ? saved : [];
-  } catch {
-    return [];
-  }
+  return NavyugStore.getSaved();
 }
 
 function saveCourse(courseId) {
-  const course = courses.find(item => item.id === courseId);
-  if (!course) return;
-
-  try {
-    const saved = getSavedCourses();
-
-    if (saved.includes(courseId)) {
-      showToast("This course is already saved in this browser.");
-      return;
-    }
-
-    saved.push(courseId);
-    localStorage.setItem("learnora-saved-courses", JSON.stringify(saved));
-    showToast("Course saved in this browser.");
-  } catch {
-    showToast("Browser storage is unavailable. Nothing was saved.");
+  if (!courses.some(item => item.id === courseId)) return;
+  if (NavyugStore.isSaved(courseId)) {
+    showToast("This course is already saved in this browser.");
+    return;
   }
+  showToast(NavyugStore.toggleSaved(courseId) ? "Course saved in this browser." : "Browser storage is unavailable. Nothing was saved.");
 }
 
 function previewCourse(courseId) {
-  const course = courses.find(item => item.id === courseId);
-  if (!course) return;
-
-  closeCourseDialog();
-  showToast(`Preview selected: ${course.title}. Full lessons are a future build step.`);
+  window.location.href = "course.html?id=" + encodeURIComponent(courseId);
 }
 
 function setActiveCategory(category) {
@@ -366,7 +242,7 @@ function searchFor(query) {
   });
 
   if (query && getFilteredCourses().length === 0) {
-    showToast("No matching sample courses. Try another keyword.");
+    showToast("No matching courses. Try another keyword.");
   }
 }
 
@@ -396,13 +272,6 @@ document.querySelectorAll("[data-quick-search]").forEach(button => {
   });
 });
 
-document.querySelectorAll("[data-path-search]").forEach(link => {
-  link.addEventListener("click", () => {
-    const query = link.dataset.pathSearch || "";
-    if (courseSearch) courseSearch.value = query;
-    activeCategory = "All";
-  });
-});
 
 /* Course dialog */
 
@@ -424,55 +293,51 @@ courseDialog?.addEventListener("click", event => {
   if (event.target === courseDialog) closeCourseDialog();
 });
 
-/* Mobile navigation */
+/* Search shortcuts */
 
-menuToggle?.addEventListener("click", () => {
-  const isOpen = mainNav?.classList.toggle("open") || false;
-
-  menuToggle.setAttribute("aria-expanded", String(isOpen));
-  menuToggle.setAttribute(
-    "aria-label",
-    isOpen ? "Close navigation" : "Open navigation"
-  );
-});
-
-mainNav?.querySelectorAll("a").forEach(link => {
-  link.addEventListener("click", () => {
-    mainNav.classList.remove("open");
-    menuToggle?.setAttribute("aria-expanded", "false");
-    menuToggle?.setAttribute("aria-label", "Open navigation");
-  });
-});
-
-/* Prototype-only interactions */
-
-document.querySelectorAll("[data-path-search]").forEach(link => {
-  link.addEventListener("click", () => {
-    searchFor(link.dataset.pathSearch || "");
-  });
-});
 
 const currentYear = document.querySelector("#currentYear");
 if (currentYear) currentYear.textContent = String(new Date().getFullYear());
 
-/* Institutional inquiry form: browser-only demonstration */
 
-const inquiryForm = document.querySelector("#inquiryForm");
+const navSearchForm = document.querySelector("#navSearchForm");
+const navSearchInput = document.querySelector("#navSearchInput");
 
-inquiryForm?.addEventListener("submit", event => {
+navSearchForm?.addEventListener("submit", event => {
   event.preventDefault();
 
-  if (!inquiryForm.reportValidity()) return;
+  const query = navSearchInput?.value.trim() || "";
 
-  const success = document.querySelector("#formSuccess");
-  if (success) {
-    success.hidden = false;
-    success.textContent =
-      "Thanks for your interest. This demo form does not send your details anywhere yet.";
+  if (window.location.pathname.endsWith("/index.html") ||
+      window.location.pathname === "/" ||
+      window.location.pathname.endsWith("/")) {
+    const catalogSearch = document.querySelector("#courseSearch");
+
+    if (catalogSearch) {
+      setActiveCategory("All");
+      catalogSearch.value = query;
+      catalogSearch.dispatchEvent(new Event("input", { bubbles: true }));
+    }
+
+    document.querySelector("#explore")?.scrollIntoView({
+      behavior: "smooth"
+    });
+  } else {
+    window.location.href = "index.html?search=" + encodeURIComponent(query) + "#explore";
   }
-
-  inquiryForm.reset();
 });
+
+const params = new URLSearchParams(window.location.search);
+const initialSearch = params.get("search");
+
+if (initialSearch) {
+  const searchInput = document.querySelector("#courseSearch");
+
+  if (searchInput) {
+    searchInput.value = initialSearch;
+    searchInput.dispatchEvent(new Event("input", { bubbles: true }));
+  }
+}
 
 /* Initial render */
 
